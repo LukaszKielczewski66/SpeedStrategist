@@ -1,7 +1,7 @@
-import React from "react";
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const LoginScreen = () => {
+
     return (
         <KeyboardAvoidingView
          style={styles.container}
@@ -59,8 +59,7 @@ const styles = StyleSheet.create({
       width: '80%'
     },
     input: {
-      backgroundColor: 'black',
-      fontSize: 50,
+      backgroundColor: 'white',
       paddingHorizontal: 15,
       paddingVertical: 10,
       borderRadius: 10,
