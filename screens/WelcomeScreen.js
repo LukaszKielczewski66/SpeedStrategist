@@ -6,8 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const WelcomeScreen = () => {
     const navigation = useNavigation();
     return (
-        <View className="flex-1" style={{backgroundColor: '#61A3BA'}}>
-        <View className="flex-1 flex justify-around my-4">
+        <SafeAreaView className="flex-1" style={{backgroundColor: '#61A3BA'}}>
+         <View className="flex-1 flex justify-around my-4">
             <Text 
                 className="text-white font-bold text-4xl text-center">
                 Let's Get Started!
@@ -34,7 +34,7 @@ const WelcomeScreen = () => {
                 </View>
             </View>
         </View>
-    </View>
+    </SafeAreaView>
     )
 }
 

@@ -1,97 +1,65 @@
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ArrowLeftIcon } from "react-native-heroicons/solid";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
-
+  const navigation = useNavigation()
     return (
-        <KeyboardAvoidingView
-         style={styles.container}
-         behavior="padding"
-        >
-            <View style={styles.inputContainer}>
-            {/* EMAIL INPUT  */}
-                <TextInput
-                 placeholder="Email"
-                //  value={}
-                //  onChangeText={text => {}}
-                 style={styles.input}
-                ></TextInput>
-
-            {/* PASSWORD INPUT?*/}
-                <TextInput
-                 placeholder="Password"
-                //  value={}
-                //  onChangeText={text => {}}
-                 style={styles.input}
-                 secureTextEntry
-                ></TextInput>
-            </View>
-
-            {/* BUTTON  */}
-            <View
-             style={styles.buttonContainer}>
-                <TouchableOpacity
-                 onPress={() => { }}
-                 style={styles.button}
+      <View className="flex-1 bg-white" style={{ backgroundColor: "#61A3BA" }}>
+         <SafeAreaView className="flex ">
+        <View className="flex-row justify-start">
+          <TouchableOpacity onPress={()=> navigation.goBack()} 
+          className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4">
+            <ArrowLeftIcon size="20" color="black" />
+          </TouchableOpacity>
+        </View>
+        <View  className="flex-row justify-center">
+          <Image source={require('../assets/images/BeepBeepRacer.png')} 
+          style={{width: 330, height: 280}} />
+        </View>
+        </SafeAreaView>
+        
+        <View 
+        style={{borderTopLeftRadius: 50, borderTopRightRadius: 50, marginTop: 25}} 
+        className="flex-1 bg-white px-8 pt-8">
+          <View className="form space-y-2 mt-8">
+            <Text className="text-gray-700 ml-4">Email Address</Text>
+            <TextInput 
+              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+              placeholder="email"
+              value="" 
+            />
+            <Text className="text-gray-700 ml-4">Password</Text>
+            <TextInput 
+              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
+              secureTextEntry
+              placeholder="password"
+              value="" 
+            />
+            <TouchableOpacity 
+              className="py-3 bg-yellow-400 rounded-xl">
+                <Text 
+                    className="text-xl font-bold text-center text-gray-700"
                 >
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
+                        Login
+                </Text>
+             </TouchableOpacity>
+            
+          </View>
+          
+          <View className="flex-row justify-center mt-20">
+              <Text className="text-gray-500 font-semibold">
+                  Don't have an account?
+              </Text>
+              <TouchableOpacity onPress={()=> navigation.navigate('SignUp')}>
+                  <Text className="font-semibold text-yellow-500"> Sign Up</Text>
+              </TouchableOpacity>
+          </View>
+          </View>
 
-                <TouchableOpacity
-                 onPress={() => { }}
-                 style={[styles.button, styles.buttonOutline]}
-                >
-                    <Text style={ styles.buttonOutlineText}>Register</Text>
-                </TouchableOpacity>
-             </View>
-        </KeyboardAvoidingView>
+      </View>
     )
 }
 
 export default LoginScreen
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    inputContainer: {
-      width: '80%'
-    },
-    input: {
-      backgroundColor: 'white',
-      paddingHorizontal: 15,
-      paddingVertical: 10,
-      borderRadius: 10,
-      marginTop: 5,
-    },
-    buttonContainer: {
-      width: '60%',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 40,
-    },
-    button: {
-      backgroundColor: '#0782F9',
-      width: '100%',
-      padding: 15,
-      borderRadius: 10,
-      alignItems: 'center',
-    },
-    buttonOutline: {
-      backgroundColor: 'white',
-      marginTop: 5,
-      borderColor: '#0782F9',
-      borderWidth: 2,
-    },
-    buttonText: {
-      color: 'white',
-      fontWeight: '700',
-      fontSize: 16,
-    },
-    buttonOutlineText: {
-      color: '#0782F9',
-      fontWeight: '700',
-      fontSize: 16,
-    },
-  })
