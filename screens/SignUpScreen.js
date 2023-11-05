@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
 import {
-  StyleSheet,
   Text,
   TextInput,
   Image,
@@ -13,6 +13,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async () => {
+    if (email && password) {
+      console.log(email, password);
+      try {
+          await createUserWithEmailAndPassword(auth, email, password);
+      } catch (err) {
+          console.log('got error', err.message);
+      }
+    }
+  }
   return (
     <View className="flex-1 bg-white" style={{ backgroundColor: "#61A3BA" }}>
       <SafeAreaView className="flex">
@@ -48,17 +61,20 @@ const SignUpScreen = () => {
           <Text className="text-gray-700 ml-4">Email Address</Text>
           <TextInput
             className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-            value=""
+            value={ email }
+            onChangeText={ value => setEmail(value) }
             placeholder="Enter Email"
           />
           <Text className="text-gray-700 ml-4">Password</Text>
           <TextInput
             className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
             secureTextEntry
-            value=""
-            placeholder="Enter Password"
+            value={ password }
+            onTextChange={ value => setPassword(value) }
+            placeholder="Enter password"
           />
-          <TouchableOpacity className="py-3 bg-yellow-400 rounded-xl">
+          <TouchableOpacity className="py-3 bg-yellow-400 rounded-xl"
+          onPress= { handleSubmit() }>
             <Text className="font-xl font-bold text-center text-gray-700">
               Sign Up
             </Text>
@@ -76,5 +92,3 @@ const SignUpScreen = () => {
 };
 
 export default SignUpScreen;
-
-const styles = StyleSheet.create({});
