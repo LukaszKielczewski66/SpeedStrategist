@@ -10,14 +10,17 @@ import {
 } from "react-native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { auth } from "../config/firebase"
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+      // TODO dlaczego to hasło nie działa?
+  // const [password, setPassword] = useState('');
+  const password = 'mock-password';
 
   const handleSubmit = async () => {
-    if (email && password) {
+    if (email) {
       console.log(email, password);
       try {
           await createUserWithEmailAndPassword(auth, email, password);
@@ -68,13 +71,13 @@ const SignUpScreen = () => {
           <Text className="text-gray-700 ml-4">Password</Text>
           <TextInput
             className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
-            secureTextEntry
+            
             value={ password }
-            onTextChange={ value => setPassword(value) }
+            // onTextChange={ value => setPassword(value) }
             placeholder="Enter password"
           />
           <TouchableOpacity className="py-3 bg-yellow-400 rounded-xl"
-          onPress= { handleSubmit() }>
+          onPress = { handleSubmit }>
             <Text className="font-xl font-bold text-center text-gray-700">
               Sign Up
             </Text>

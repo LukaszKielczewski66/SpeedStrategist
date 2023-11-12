@@ -1,11 +1,20 @@
+import { signOut } from "firebase/auth";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { auth } from "../config/firebase";
 
 const HomeScreen = () => {
+    const handleLogout = async () => {
+        await signOut(auth);
+    }
     return (
-        <View>
-            <Text>Home Screen</Text>
-        </View>
+        <SafeAreaView className="flex-1 flex-row justify-center items-center">
+            <Text className="text-lg">Home Page - </Text>
+            <TouchableOpacity onPress = { handleLogout } className="p-1 bg-red-400 rounded-lg">
+                <Text className="text-white text-lg font-bold">Logout</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
     )
 }
 

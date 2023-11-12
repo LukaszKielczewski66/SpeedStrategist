@@ -2,8 +2,25 @@ import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebase";
+import { useState } from "react";
 
 const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const password = 'mock-password';
+
+  const handleSubmit = async () => {
+    if (email) {
+      console.log(email, password);
+      try {
+          await signInWithEmailAndPassword(auth, email, password);
+      } catch (err) {
+          console.log('got error', err.message);
+      }
+    }
+  }
+
   const navigation = useNavigation()
     return (
       <View className="flex-1 bg-white" style={{ backgroundColor: "#61A3BA" }}>
@@ -27,17 +44,20 @@ const LoginScreen = () => {
             <Text className="text-gray-700 ml-4">Email Address</Text>
             <TextInput 
               className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-              placeholder="email"
-              value="" 
+              value={ email }
+              onChangeText={ value => setEmail(value) }
+              placeholder="Enter Email"
             />
             <Text className="text-gray-700 ml-4">Password</Text>
             <TextInput 
               className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
               secureTextEntry
               placeholder="password"
-              value="" 
+              value={ password } 
+              // onTextChange={ value => setPassword(value) }
             />
             <TouchableOpacity 
+              onPress={ handleSubmit }
               className="py-3 bg-yellow-400 rounded-xl">
                 <Text 
                     className="text-xl font-bold text-center text-gray-700"
