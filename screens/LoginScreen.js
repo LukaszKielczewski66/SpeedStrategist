@@ -1,4 +1,4 @@
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
@@ -17,8 +17,19 @@ const LoginScreen = () => {
           await signInWithEmailAndPassword(auth, email, password);
       } catch (err) {
           console.log('got error', err.message);
+          createAlert();
       }
     }
+  }
+
+  const createAlert = () => {
+    Alert.alert('Błędny użytkownik lub hasło', 'Spróbuj ponownie', [
+      {
+        text: 'Ok',
+        onPress: () => {console.log('Ok pressed'); },
+        style: 'Ok'
+      }
+    ])
   }
 
   const navigation = useNavigation()

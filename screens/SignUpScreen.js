@@ -26,8 +26,19 @@ const SignUpScreen = () => {
           await createUserWithEmailAndPassword(auth, email, password);
       } catch (err) {
           console.log('got error', err.message);
+          createAlert();
       }
     }
+  }
+
+  const createAlert = () => {
+    Alert.alert('Wystąpił problem podczas rejestracji', 'Spróbuj ponownie', [
+      {
+        text: 'Ok',
+        onPress: () => {console.log('Ok pressed'); },
+        style: 'Ok'
+      }
+    ])
   }
   return (
     <View className="flex-1 bg-white" style={{ backgroundColor: "#61A3BA" }}>
