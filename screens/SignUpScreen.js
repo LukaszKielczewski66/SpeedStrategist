@@ -36,7 +36,6 @@ const SignUpScreen = () => {
       {
         text: 'Ok',
         onPress: () => {console.log('Ok pressed'); },
-        style: 'Ok'
       }
     ])
   }

@@ -27,7 +27,6 @@ const LoginScreen = () => {
       {
         text: 'Ok',
         onPress: () => {console.log('Ok pressed'); },
-        style: 'Ok'
       }
     ])
   }
@@ -35,7 +34,7 @@ const LoginScreen = () => {
   const navigation = useNavigation()
     return (
       <View className="flex-1 bg-white" style={{ backgroundColor: "#61A3BA" }}>
-         <SafeAreaView className="flex ">
+         <SafeAreaView className="flex">
         <View className="flex-row justify-start">
           <TouchableOpacity onPress={()=> navigation.goBack()} 
           className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4">
