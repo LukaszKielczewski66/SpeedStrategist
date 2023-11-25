@@ -3,18 +3,23 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import firestore from '@react-native-firebase/firestore';
+import { db } from '../config/firebase';
+import { collection, getDocs } from "firebase/firestore"; 
 
 const SettingsScreen = () => {
+    const handleLogout = async () => {
+        await signOut(auth);
+    }
+
     const [settings, setSettings] = useState([]);
 
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const settingsSnapshot = await firestore().collection('Settings').get();
+                const settingsSnapshot = await getDocs(collection(db, "Settings"));
                 const settingsData = settingsSnapshot.docs.map(doc => doc.data());
                 console.log(settingsData);
-                setSettings(settingsData);
+                // setSettings(settingsData);
             } catch (error) {
                 console.error('Error fetching settings', error);
             }
@@ -37,6 +42,10 @@ const SettingsScreen = () => {
                     <Text className="text-slate-800 text-white text-xl mr-12">Ustawienia</Text>
                 </View>
             </View>
+                        <Text className="text-lg">Home Page - </Text>
+            <TouchableOpacity onPress = { handleLogout } className="p-1 bg-red-400 rounded-lg">
+                <Text className="text-white text-lg font-bold">Logout</Text>
+            </TouchableOpacity>
         </SafeAreaView>
         </View>
     )

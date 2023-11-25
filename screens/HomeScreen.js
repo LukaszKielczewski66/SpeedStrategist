@@ -9,10 +9,6 @@ import LoadingScreen from "./LoadingScreen";
 import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
-    const handleLogout = async () => {
-        await signOut(auth);
-    }
-
     const [location, setLocation] = useState(null);
 
     useEffect(() => {
@@ -76,10 +72,5 @@ const HomeScreen = () => {
       </View>
     )
 }
-
-            {/* <Text className="text-lg">Home Page - </Text>
-            <TouchableOpacity onPress = { handleLogout } className="p-1 bg-red-400 rounded-lg">
-                <Text className="text-white text-lg font-bold">Logout</Text>
-            </TouchableOpacity> */}
 
 export default HomeScreen
