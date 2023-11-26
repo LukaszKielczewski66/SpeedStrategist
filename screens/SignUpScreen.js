@@ -7,10 +7,14 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Alert
 } from "react-native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../config/firebase"
+import { getAuth, getSignInMethods } from "firebase/auth";
+import { db } from '../config/firebase';
+import { collection, getDocs } from "firebase/firestore"; 
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -23,16 +27,33 @@ const SignUpScreen = () => {
     if (email) {
       console.log(email, password);
       try {
-          await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, email, password);
       } catch (err) {
-          console.log('got error', err.message);
-          createAlert();
+        switch (err.code) {
+          case 'auth/email-already-in-use':
+            console.log(`Email address ${email} already in use.`);
+            createAlert("Podany adres e-mail jest już w użyciu");
+            break;
+          case 'auth/invalid-email':
+            console.log(`Email address ${email} is invalid.`);
+            break;
+          case 'auth/operation-not-allowed':
+            console.log(`Error during sign up.`);
+            break;
+          case 'auth/weak-password':
+            console.log('Password is not strong enough. Add additional characters including special characters and numbers.');
+            break;
+          default:
+            console.log(err.message);
+            break;
+        }
       }
     }
   }
 
-  const createAlert = () => {
-    Alert.alert('Wystąpił problem podczas rejestracji', 'Spróbuj ponownie', [
+  const createAlert = alertContent => {
+    console.log(alertContent);
+    Alert.alert(alertContent, "Spróbuj ponownie", [
       {
         text: 'Ok',
         onPress: () => {console.log('Ok pressed'); },

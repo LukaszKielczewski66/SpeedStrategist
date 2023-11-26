@@ -5,6 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { db } from '../config/firebase';
 import { collection, getDocs } from "firebase/firestore"; 
+import { auth } from "../config/firebase";
+import { signOut } from "firebase/auth";
 
 const SettingsScreen = () => {
     const handleLogout = async () => {
