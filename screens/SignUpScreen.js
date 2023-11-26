@@ -12,9 +12,8 @@ import {
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../config/firebase"
-import { getAuth, getSignInMethods } from "firebase/auth";
 import { db } from '../config/firebase';
-import { collection, getDocs } from "firebase/firestore"; 
+import { doc, setDoc} from "firebase/firestore"; 
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -27,7 +26,15 @@ const SignUpScreen = () => {
     if (email) {
       console.log(email, password);
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+       const user = userCredential.user;
+       if (user) {
+        const userRef = doc(db, 'Settings', user.uid);
+
+        await setDoc(userRef, {
+          email: user.email
+        });
+       }
       } catch (err) {
         switch (err.code) {
           case 'auth/email-already-in-use':
