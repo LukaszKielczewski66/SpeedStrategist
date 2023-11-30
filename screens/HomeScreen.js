@@ -1,8 +1,6 @@
-import { signOut } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { HomeIcon, Cog6ToothIcon, FireIcon } from "react-native-heroicons/solid";
-import { auth } from "../config/firebase";
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import LoadingScreen from "./LoadingScreen";

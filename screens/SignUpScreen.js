@@ -13,18 +13,18 @@ import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../config/firebase"
 import { db } from '../config/firebase';
-import { doc, setDoc} from "firebase/firestore"; 
+import { doc, setDoc} from "firebase/firestore";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
       // TODO dlaczego to hasło nie działa?
   // const [password, setPassword] = useState('');
   const password = 'mock-password';
 
   const handleSubmit = async () => {
     if (email) {
-      console.log(email, password);
       try {
        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
        const user = userCredential.user;
@@ -32,7 +32,12 @@ const SignUpScreen = () => {
         const userRef = doc(db, 'Settings', user.uid);
 
         await setDoc(userRef, {
-          email: user.email
+          email: user.email,
+          name: name,
+          surname: '',
+          car: '',
+          model: '',
+          icon: ''
         });
        }
       } catch (err) {
@@ -96,7 +101,8 @@ const SignUpScreen = () => {
           <Text className="text-gray-700 ml-4">Full Name</Text>
           <TextInput
             className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-            value=""
+            value= { name }
+            onChangeText={ value => setName(value) }
             placeholder="Enter Name"
           />
           <Text className="text-gray-700 ml-4">Email Address</Text>

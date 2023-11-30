@@ -3,32 +3,51 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-nativ
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { db } from '../config/firebase';
-import { collection, getDocs } from "firebase/firestore"; 
-import { auth } from "../config/firebase";
-import { signOut } from "firebase/auth";
+import { getDoc, doc, updateDoc } from "firebase/firestore"; 
+import { auth, db } from "../config/firebase";
+import { signOut } from "firebase/auth"
+import useAuth from "../hooks/useAuth";;
 
 const SettingsScreen = () => {
+    const { user } = useAuth();
+
     const handleLogout = async () => {
         await signOut(auth);
     }
 
     const [settings, setSettings] = useState([]);
-
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const settingsSnapshot = await getDocs(collection(db, "Settings"));
-                const settingsData = settingsSnapshot.docs.map(doc => doc.data());
-                console.log(settingsData);
-                // setSettings(settingsData);
+                if (user) {
+                    const settingsDoc = await getDoc(doc(db, 'Settings', user.uid));
+                    const settingsData = settingsDoc.data();
+
+                    setSettings(settingsData);
+                }
             } catch (error) {
                 console.error('Error fetching settings', error);
             }
         };
 
         fetchSettings();
-    }, []);
+    }, [user]);
+
+    const saveSettings = async() => {
+        if (settings.name !== "") {
+            try {
+                const userDocRef = doc(db, 'Settings', user.uid);
+                await updateDoc(userDocRef, settings);
+            } catch (err) {
+                console.error('Error podczas zapisu do bazy', err);
+            }
+        }
+    }
+
+    const onFieldChange = (key, text) => {
+        setSettings({...settings, [key]: text})
+        return text;
+    }
 
     const navigation = useNavigation()
     return (
@@ -49,16 +68,16 @@ const SettingsScreen = () => {
                 <TextInput 
                 className="p-4 text-white rounded-xl mb-3"
                 style={ styles.textInput }
-                value=""
-                onChangeText=""
+                value= { settings.name }
+                onChangeText={ value => onFieldChange('name', value) }
                 />
 
-                <Text className="text-white mx-3 mt-3">Email</Text>
+                <Text className="text-white mx-3 mt-3">Nazwisko</Text>
                 <TextInput 
                 className="p-4 text-white rounded-xl mb-3"
                 style={ styles.textInput }
-                value=""
-                onChangeText=""
+                value={ settings.surname }
+                onChangeText= { value => onFieldChange('surname', value) }
                 />
                 <Text className="text-white mt-3 text-center text-lg">Mój samochód</Text>
                 <View className="flex-row mt-3">
@@ -67,8 +86,8 @@ const SettingsScreen = () => {
                         <TextInput 
                         className="p-4 text-white rounded-xl mb-3"
                         style={ styles.textInput }
-                        value=""
-                        onChangeText=""
+                        value={ settings.car }
+                        onChangeText={ value => onFieldChange('car', value) }
                     />
                     </View>
                     <View className="flex-1">
@@ -76,13 +95,14 @@ const SettingsScreen = () => {
                         <TextInput 
                         className="p-4 text-white rounded-xl mb-3"
                         style={ styles.textInput }
-                        value=""
-                        onChangeText=""
+                        value= { settings.model }
+                        onChangeText= { value => onFieldChange('model', value) }
                         />
                     </View>
                 </View>
                 <TouchableOpacity
                      className="py-3 bg-yellow-400 rounded-xl mt-8"
+                     onPress={ saveSettings }
                     >
                         <Text className="text-xl font-bold text-center text-gray-700">Zapisz ustawienia</Text>
                     </TouchableOpacity>
