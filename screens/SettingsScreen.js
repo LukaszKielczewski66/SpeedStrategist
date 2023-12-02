@@ -6,7 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import { getDoc, doc, updateDoc } from "firebase/firestore"; 
 import { auth, db } from "../config/firebase";
 import { signOut } from "firebase/auth"
-import useAuth from "../hooks/useAuth";;
+import useAuth from "../hooks/useAuth";
+import LoadingScreen from "./LoadingScreen";
 
 const SettingsScreen = () => {
     const { user } = useAuth();
@@ -51,7 +52,10 @@ const SettingsScreen = () => {
 
     const navigation = useNavigation()
     return (
-        <View className="flex-1" style={{ backgroundColor: "#0f172a" }}>
+        <View className="flex-1">
+
+        { user ? (
+            <View className="flex-1" style={{ backgroundColor: "#0f172a" }}>
         <SafeAreaView className="flex">
             <View className="flex-row justify-start mb-12">
                 <TouchableOpacity
@@ -127,6 +131,7 @@ const SettingsScreen = () => {
                 <View className="mt-3">
                     <TouchableOpacity
                      className="py-3 bg-yellow-400 rounded-xl"
+                     onPress={ () => navigation.navigate('Authors')}
                     >
                         <Text className="text-xl font-bold text-center text-gray-700">Autorzy</Text>
                     </TouchableOpacity>
@@ -138,6 +143,11 @@ const SettingsScreen = () => {
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
+        </View>
+        ) : (
+            <LoadingScreen message="Trwa ładowanie ustawień..."/>
+        ) }
+
         </View>
     )
 }

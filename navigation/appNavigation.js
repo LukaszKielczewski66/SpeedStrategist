@@ -9,6 +9,7 @@ import useAuth from '../hooks/useAuth';
 import UserScreen from '../screens/UserScreen';
 import RideScreen from '../screens/RideScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import AuthorsScreen from '../screens/AuthorsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export default function AppNavigation() {
           <Stack.Screen name="User" options={{headerShown: false}} component={UserScreen} />
           <Stack.Screen name="Ride" options={{headerShown: false}} component={RideScreen} />
           <Stack.Screen name="Settings" options={{headerShown: false}} component={SettingsScreen} />
+          <Stack.Screen name="Authors" options={{headerShown: false}} component={AuthorsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     )
