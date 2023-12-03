@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, Text } from "react-native";
 import { HomeIcon, Cog6ToothIcon, FireIcon } from "react-native-heroicons/solid";
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -25,6 +25,12 @@ const HomeScreen = () => {
       };
   
       getLocationAsync();
+
+      const intervalId = setInterval(() => {
+        getLocationAsync();
+      }, 2000);
+
+      return () => clearInterval(intervalId);
     }, []);
 
     const navigation = useNavigation()
@@ -48,6 +54,10 @@ const HomeScreen = () => {
         )}
         {location && (
         <View className="border-t-4 border-indigo-500 d-flex flex-row" style={{ height: 100, backgroundColor: '#0f172a' }}>
+        <View className="bg-black text-white flex-1" style={{ height: '50px' }}>
+          <Text className="text-white">LATITUDE: { location.latitude }</Text>
+          <Text className="text-white">LONGTITUDE: { location.longitude } </Text>
+        </View>
         <TouchableOpacity 
             onPress={()=> navigation.navigate('Settings')}
             className="border-4-white flex-1 justify-center items-center">
