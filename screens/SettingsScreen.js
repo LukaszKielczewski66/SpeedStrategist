@@ -3,29 +3,19 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-nativ
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { getDoc, doc, updateDoc } from "firebase/firestore"; 
-import { auth, db } from "../config/firebase";
-import { signOut } from "firebase/auth"
-import useAuth from "../hooks/useAuth";
 import LoadingScreen from "./LoadingScreen";
 
 const SettingsScreen = () => {
-    const { user } = useAuth();
 
     const handleLogout = async () => {
-        await signOut(auth);
+        // wyloguj
     }
 
     const [settings, setSettings] = useState([]);
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                if (user) {
-                    const settingsDoc = await getDoc(doc(db, 'Settings', user.uid));
-                    const settingsData = settingsDoc.data();
-
-                    setSettings(settingsData);
-                }
+            //    Pobierz dane z mongodb
             } catch (error) {
                 console.error('Error fetching settings', error);
             }
@@ -37,8 +27,7 @@ const SettingsScreen = () => {
     const saveSettings = async() => {
         if (settings.name !== "") {
             try {
-                const userDocRef = doc(db, 'Settings', user.uid);
-                await updateDoc(userDocRef, settings);
+                // Update danych
             } catch (err) {
                 console.error('Error podczas zapisu do bazy', err);
             }
@@ -131,7 +120,7 @@ const SettingsScreen = () => {
                 <View className="mt-3">
                     <TouchableOpacity
                      className="py-3 bg-yellow-400 rounded-xl"
-                     onPress={ () => navigation.navigate('Authors')}
+                     onPress={ () => snavigation.navigate('Authors')}
                     >
                         <Text className="text-xl font-bold text-center text-gray-700">Autorzy</Text>
                     </TouchableOpacity>

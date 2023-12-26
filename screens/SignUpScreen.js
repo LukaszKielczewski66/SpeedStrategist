@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import axios from "axios";
 import React, { useState } from "react";
 import {
   Text,
@@ -11,9 +11,7 @@ import {
 } from "react-native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { auth } from "../config/firebase"
-import { db } from '../config/firebase';
-import { doc, setDoc} from "firebase/firestore";
+import API_CONFIG from '../config/api-config';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -26,39 +24,28 @@ const SignUpScreen = () => {
   const handleSubmit = async () => {
     if (email) {
       try {
-       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-       const user = userCredential.user;
-       if (user) {
-        const userRef = doc(db, 'Settings', user.uid);
-
-        await setDoc(userRef, {
-          email: user.email,
-          name: name,
-          surname: '',
-          car: '',
-          model: '',
-          icon: ''
+        let data = JSON.stringify({
+          "email": email,
+          "password": password,
+          "firstName": name
         });
-       }
-      } catch (err) {
-        switch (err.code) {
-          case 'auth/email-already-in-use':
-            console.log(`Email address ${email} already in use.`);
-            createAlert("Podany adres e-mail jest już w użyciu");
-            break;
-          case 'auth/invalid-email':
-            console.log(`Email address ${email} is invalid.`);
-            break;
-          case 'auth/operation-not-allowed':
-            console.log(`Error during sign up.`);
-            break;
-          case 'auth/weak-password':
-            console.log('Password is not strong enough. Add additional characters including special characters and numbers.');
-            break;
-          default:
-            console.log(err.message);
-            break;
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: `${API_CONFIG.baseUrl}/register`,
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Cookie': 'connect.sid=s%3AnOQAyltfFTfKU1V5GxrmKRahpxGwuAii.X9Y9TBxvpoMs9dNqaaWEJbkAEKf%2B5bj%2BFtymOJblMpU'
+          },
+          data : data
         }
+        console.log(config);
+        axios.request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+        })
+      } catch (err) {
+        console.log(err);
       }
     }
   }

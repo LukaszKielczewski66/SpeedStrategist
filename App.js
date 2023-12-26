@@ -1,5 +1,6 @@
 import AppNavigation from './navigation/appNavigation';
-// import WelcomeScreen from './screens/WelcomeScreen';
+
+const API_BASE_URL = process.env.API_BASE_URL;
 
 export default function App() {
   return (

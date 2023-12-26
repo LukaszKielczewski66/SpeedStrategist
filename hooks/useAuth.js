@@ -1,19 +1,19 @@
-import { onAuthStateChanged } from "firebase/auth";
-import React, { useEffect, useState } from "react";
-import { auth } from '../config/firebase'
+// import { onAuthStateChanged } from "firebase/auth";
+// import React, { useEffect, useState } from "react";
+// import { auth } from '../config/firebase'
 
-export default function useAuth() {
-        const [user, setUser] = useState(null);
+// export default function useAuth() {
+//         const [user, setUser] = useState(null);
 
-        useEffect(() => {
-            const unsub = onAuthStateChanged(auth, user => {
-                if (user) {
-                    setUser(user);
-                } else {
-                    setUser(null);
-                }
-            })
-            return unsub;
-        })
-    return { user }
-}
+//         useEffect(() => {
+//             const unsub = onAuthStateChanged(auth, user => {
+//                 if (user) {
+//                     setUser(user);
+//                 } else {
+//                     setUser(null);
+//                 }
+//             })
+//             return unsub;
+//         })
+//     return { user }
+// }

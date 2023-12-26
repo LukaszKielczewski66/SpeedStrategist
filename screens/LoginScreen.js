@@ -2,8 +2,6 @@ import { Image, Text, TextInput, TouchableOpacity, View, Alert } from "react-nat
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
 import { useState } from "react";
 
 const LoginScreen = () => {
@@ -14,7 +12,7 @@ const LoginScreen = () => {
     if (email) {
       console.log(email, password);
       try {
-          await signInWithEmailAndPassword(auth, email, password);
+          // Logowanie
       } catch (err) {
           console.log('got error', err.message);
           createAlert();
