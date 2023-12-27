@@ -40,7 +40,9 @@ const SignUpScreen = () => {
         }
         
         const response = await axios.request(config);
-        // console.log(response.data);
+        if (response) {
+          navigation.navigate('Login');
+        }
 
       } catch (err) {
         switch(err.response.status) {

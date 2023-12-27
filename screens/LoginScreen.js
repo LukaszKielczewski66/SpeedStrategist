@@ -3,6 +3,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import API_CONFIG from '../config/api-config';
+import axios from "axios";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -10,18 +12,45 @@ const LoginScreen = () => {
 
   const handleSubmit = async () => {
     if (email) {
-      console.log(email, password);
       try {
-          // Logowanie
+          const data = JSON.stringify({
+            email, password
+          })
+
+          let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${API_CONFIG.baseUrl}/login`,
+            headers: { 
+              'Content-Type': 'application/json', 
+            },
+            data : data
+          }
+          
+          const response = await axios.request(config);
+          if (response.data.apiToken) {
+            // navigation.navigate('Home');
+          }
+
       } catch (err) {
-          console.log('got error', err.message);
-          createAlert();
+        console.log(err.response.status)
+        switch(err.response.status) {
+          case 406:
+            createAlert('Nie znaleziono takiego użytkownika');
+            break;
+          case 405:
+            createAlert('Niepoprawne hasło');
+            break;
+          default:
+            createAlert('Wystąpił błąd podczas rejestracji');
+        }
       }
     }
   }
 
-  const createAlert = () => {
-    Alert.alert('Błędny użytkownik lub hasło', 'Spróbuj ponownie', [
+  const createAlert = alertContent => {
+    console.log(alertContent);
+    Alert.alert(alertContent, "Spróbuj ponownie", [
       {
         text: 'Ok',
         onPress: () => {console.log('Ok pressed'); },
