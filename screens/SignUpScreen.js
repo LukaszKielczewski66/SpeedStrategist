@@ -35,17 +35,24 @@ const SignUpScreen = () => {
           url: `${API_CONFIG.baseUrl}/register`,
           headers: { 
             'Content-Type': 'application/json', 
-            'Cookie': 'connect.sid=s%3AnOQAyltfFTfKU1V5GxrmKRahpxGwuAii.X9Y9TBxvpoMs9dNqaaWEJbkAEKf%2B5bj%2BFtymOJblMpU'
           },
           data : data
         }
-        console.log(config);
-        axios.request(config)
-        .then((response) => {
-          console.log(JSON.stringify(response.data));
-        })
+        
+        const response = await axios.request(config);
+        // console.log(response.data);
+
       } catch (err) {
-        console.log(err);
+        switch(err.response.status) {
+          case 409:
+            createAlert('Email zajęty');
+            break;
+          case 408:
+            createAlert('Email zajęty');
+            break;
+          default:
+            createAlert('Wystąpił błąd podczas rejestracji');
+        }
       }
     }
   }
