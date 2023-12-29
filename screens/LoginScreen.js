@@ -4,6 +4,8 @@ import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import API_CONFIG from '../config/api-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import axios from "axios";
 
 const LoginScreen = () => {
@@ -29,7 +31,10 @@ const LoginScreen = () => {
           
           const response = await axios.request(config);
           if (response.data.apiToken) {
-            // navigation.navigate('Home');
+            await AsyncStorage.setItem('apiToken', response.data.apiToken);
+            // const apiToken = await AsyncStorage.getItem('apiToken');
+            // console.log
+            navigation.navigate('Home');
           }
 
       } catch (err) {

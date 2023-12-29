@@ -4,34 +4,69 @@ import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import LoadingScreen from "./LoadingScreen";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_CONFIG from '../config/api-config';
+import axios from "axios";
+
 
 const SettingsScreen = () => {
-
-    const handleLogout = async () => {
-        // wyloguj
-    }
-
+    const [apiToken, setApiToken] = useState(null);
     const [settings, setSettings] = useState([]);
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-            //    Pobierz dane z mongodb
-            } catch (error) {
-                console.error('Error fetching settings', error);
-            }
-        };
 
-        fetchSettings();
-    }, [user]);
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const storedToken = await AsyncStorage.getItem('apiToken');
+            if (storedToken) {
+                setApiToken(storedToken);
+                console.log('ApiToken:', storedToken);
+
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${API_CONFIG.baseUrl}/user`,
+                    headers: { 
+                        'Authorization': `Bearer ${storedToken}`
+                    }
+                }
+
+                const user = await axios.request(config);
+
+                setSettings(user.data);
+            }
+          } catch (error) {
+            console.error('error while fetching apiToken', error);
+          }
+        };
+    
+        fetchUserData();
+      }, []);
 
     const saveSettings = async() => {
-        if (settings.name !== "") {
+        if (settings.firstName !== "") {
             try {
-                // Update danych
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${API_CONFIG.baseUrl}/updateUserData`,
+                    headers: { 
+                        'Authorization': `Bearer ${apiToken}`
+                    },
+                    data: settings
+                }
+
+                const response = await axios.request(config);
+
+                console.log('response :', response.data);
             } catch (err) {
                 console.error('Error podczas zapisu do bazy', err);
             }
         }
+    }
+
+    const handleLogout = async () => {
+        await AsyncStorage.removeItem('apiToken');
+        navigation.navigate('Welcome');
     }
 
     const onFieldChange = (key, text) => {
@@ -43,7 +78,7 @@ const SettingsScreen = () => {
     return (
         <View className="flex-1">
 
-        { user ? (
+        { settings ? (
             <View className="flex-1" style={{ backgroundColor: "#0f172a" }}>
         <SafeAreaView className="flex">
             <View className="flex-row justify-start mb-12">
@@ -61,16 +96,16 @@ const SettingsScreen = () => {
                 <TextInput 
                 className="p-4 text-white rounded-xl mb-3"
                 style={ styles.textInput }
-                value= { settings.name }
-                onChangeText={ value => onFieldChange('name', value) }
+                value= { settings.firstName }
+                onChangeText={ value => onFieldChange('firstName', value) }
                 />
 
                 <Text className="text-white mx-3 mt-3">Nazwisko</Text>
                 <TextInput 
                 className="p-4 text-white rounded-xl mb-3"
                 style={ styles.textInput }
-                value={ settings.surname }
-                onChangeText= { value => onFieldChange('surname', value) }
+                value={ settings.lastName }
+                onChangeText= { value => onFieldChange('lastName', value) }
                 />
                 <Text className="text-white mt-3 text-center text-lg">Mój samochód</Text>
                 <View className="flex-row mt-3">
@@ -120,7 +155,7 @@ const SettingsScreen = () => {
                 <View className="mt-3">
                     <TouchableOpacity
                      className="py-3 bg-yellow-400 rounded-xl"
-                     onPress={ () => snavigation.navigate('Authors')}
+                     onPress={ () => navigation.navigate('Authors')}
                     >
                         <Text className="text-xl font-bold text-center text-gray-700">Autorzy</Text>
                     </TouchableOpacity>
