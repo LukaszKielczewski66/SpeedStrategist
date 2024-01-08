@@ -10,7 +10,8 @@ import axios from "axios";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
-  const password = 'mock-password';
+  // const [password, setPassword] = useState('');
+  const password = 'mock-password'
 
   const handleSubmit = async () => {
     if (email) {
@@ -38,7 +39,7 @@ const LoginScreen = () => {
           }
 
       } catch (err) {
-        console.log(err.response.status)
+        console.log(err)
         switch(err.response.status) {
           case 406:
             createAlert('Nie znaleziono takiego użytkownika');

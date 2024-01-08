@@ -9,6 +9,8 @@ import UserScreen from '../screens/UserScreen';
 import RideScreen from '../screens/RideScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import AuthorsScreen from '../screens/AuthorsScreen';
+import PasswordChangeScreen from '../screens/PasswordChangeScreen';
+import IconChangeScreen from '../screens/IconChangeScreen';
 // import { isUserLoggedIn } from  '../hooks/auth';
 
 const Stack = createNativeStackNavigator();
@@ -42,6 +44,8 @@ export default function AppNavigation() {
           <Stack.Screen name="Ride" options={{headerShown: false}} component={RideScreen} />
           <Stack.Screen name="Settings" options={{headerShown: false}} component={SettingsScreen} />
           <Stack.Screen name="Authors" options={{headerShown: false}} component={AuthorsScreen} />
+          <Stack.Screen name="PasswordChange" options={{headerShown: false}} component={PasswordChangeScreen} />
+          <Stack.Screen name="IconChange" options={{headerShown: false}} component={IconChangeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     )

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -57,6 +57,10 @@ const SettingsScreen = () => {
 
                 const response = await axios.request(config);
 
+                if (response.status === 200) {
+                    createAlert(response.data)
+                }
+
                 console.log('response :', response.data);
             } catch (err) {
                 console.error('Error podczas zapisu do bazy', err);
@@ -73,6 +77,16 @@ const SettingsScreen = () => {
         setSettings({...settings, [key]: text})
         return text;
     }
+
+    const createAlert = alertContent => {
+        console.log(alertContent);
+        Alert.alert(alertContent, "", [
+          {
+            text: 'Ok',
+            onPress: () => {console.log('Ok pressed'); },
+          }
+        ])
+      }
 
     const navigation = useNavigation()
     return (
@@ -139,6 +153,7 @@ const SettingsScreen = () => {
                 <View className="mt-9">
                     <TouchableOpacity
                      className="py-3 bg-yellow-400 rounded-xl"
+                     onPress = { () => navigation.navigate('PasswordChange', { apiToken }) }
                     >
                         <Text className="text-xl font-bold text-center text-gray-700">Zmiana hasła</Text>
                     </TouchableOpacity>

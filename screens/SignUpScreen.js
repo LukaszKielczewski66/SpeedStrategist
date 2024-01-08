@@ -45,6 +45,7 @@ const SignUpScreen = () => {
         }
 
       } catch (err) {
+        console.log(err);
         switch(err.response.status) {
           case 409:
             createAlert('Email zajęty');
