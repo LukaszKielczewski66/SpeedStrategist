@@ -162,6 +162,7 @@ const SettingsScreen = () => {
                 <View className="mt-3">
                     <TouchableOpacity
                      className="py-3 bg-yellow-400 rounded-xl"
+                     onPress={ () => navigation.navigate('IconChange', { apiToken })}
                     >
                         <Text className="text-xl font-bold text-center text-gray-700">Zmiana ikonki pojazdu</Text>
                     </TouchableOpacity>
