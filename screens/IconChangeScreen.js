@@ -1,11 +1,9 @@
-import { Image, Text, TextInput, TouchableOpacity, View, Alert, StyleSheet, ScrollView} from "react-native";
+import { Image, Text, TouchableOpacity, View, Alert, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import API_CONFIG from '../config/api-config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import LoadingScreen from "./LoadingScreen";
 
 import axios from "axios";
 
@@ -56,7 +54,7 @@ const IconChangeScreen = () => {
             const config = createConfig('post', 'changeIcon', true, userIconName)
             const response = await axios.request(config);
             if (response) {
-                console.log(response);
+                createAlert('Pomyślnie zmieniono ikonę')
             }
         } catch(e) {
             console.log(e);
@@ -71,10 +69,8 @@ const IconChangeScreen = () => {
                 const response = await axios.request(config);
     
                 if (response.data) {
-                    console.log('RESPONSE USER ICON: ', response.data.icon);
                     setUserIconName(response.data.icon);
                 }
-                // console.log(response)
             } catch(e) {
                 console.log(e);
                 createAlert("Wystąpił błąd podczas pobierania ikony");
@@ -87,7 +83,6 @@ const IconChangeScreen = () => {
     
                 const response = await axios.request(config);
                 if (response) {
-                    console.log(response.data.icons)
                     setIcons(response.data.icons);
                 }
             } catch (e) {
@@ -188,10 +183,6 @@ const styles = StyleSheet.create({
         height: 200,
         width: 200,
       },
-      iconPicked: {
-        borderWidth: 1,
-        color: 'gold'
-      }
 })
 
 export default IconChangeScreen
