@@ -6,18 +6,28 @@ import * as Location from 'expo-location';
 import LoadingScreen from "./LoadingScreen";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapViewDirections from 'react-native-maps-directions';
 import API_CONFIG from '../config/api-config';
 import axios from "axios";
 
 
 
 const HomeScreen = () => {
+  const [origin, setOrigin] = useState(null)
+  const [destination, setDestination] = useState(null)
+  const [waypoints, setWaypoints] = useState([]);
+  const [speed, setSpeed] = useState([]);
+  const GOOGLE_MAPS_APIKEY = '';
   const route = useRoute();
+
   const routeStart = route.params?.startNewRoute;
   const [userRouteMarkers, setUserRouteMarkers] = useState([]);
+  const [showSpeed, setShowSpeed] = useState(0)
+  const [stopTrackRoute, setStopTrackRoute] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [location, setLocation] = useState(null);
   const [apiToken, setApiToken] = useState(null);
+  const [direction, setDirection] = useState(null);
   const [region, setRegion] = useState({
       latitude: 0,
       longitude: 0,
@@ -53,38 +63,54 @@ const HomeScreen = () => {
       }
     }
 
-    useEffect(() => {
-      console.log('routeStart', routeStart);
-      if (routeStart) {
-        console.log('start ride');
-      }
-    })
-
     const handleStartPress = () => {
+      
       if (intervalId === null) {
         const newIntervalId = setInterval(async () => {
           let currentLocation = await Location.getCurrentPositionAsync({});
-          let newTab = userRouteMarkers;
-          console.log('newTab: ', newTab);
-          console.log('currentLocation', currentLocation.coords)
-          newTab.push(currentLocation.coords);
-          setUserRouteMarkers(newTab);
-        }, 2000);
+
+          setWaypoints(prevWaypoints => [
+            ...prevWaypoints,
+            {
+              latitude: currentLocation.coords.latitude,
+              longitude: currentLocation.coords.longitude
+            }
+          ]);
+          setDestination(
+            {
+              latitude: currentLocation.coords.latitude,
+              longitude: currentLocation.coords.longitude
+            }
+          )
+          setSpeed(prevUserSpeed => [
+            ...prevUserSpeed,
+            {
+              speed: currentLocation.coords.speed
+            }
+          ])
+        }, 1000);
 
         setIntervalId(newIntervalId);
-
-        let tab = [];
-        tab.push(location.coords)
-        setUserRouteMarkers(tab);
     }
   }
+  useEffect(() => {
+    console.log(waypoints)
+    if (waypoints.length > 1) {
+      setOrigin(waypoints[0])
+    }
+  }, [waypoints]);
 
     const handleEndPress = () => {
-      console.log('end')
       clearInterval(intervalId);
       setIntervalId(null);
-      console.log('tab', userRouteMarkers);
+      setStopTrackRoute(true)
     }
+
+    useEffect(() => {
+      if (stopTrackRoute) {
+        setDirection(true);
+      }
+    }, [stopTrackRoute])
 
     useEffect(() => {
       const getLocationAsync = async () => {
@@ -93,10 +119,10 @@ const HomeScreen = () => {
           if (status === 'granted') {
             // const location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
             const subscription = await Location.watchPositionAsync(
-              { accuracy: Location.Accuracy.High, timeInterval: 500 },
+              { accuracy: Location.Accuracy.High, timeInterval: 1000 },
               (newLocation) => {
                 setLocation(newLocation.coords);
-                console.log(newLocation.coords);
+                setShowSpeed(newLocation.coords.speed * 10000)
               }
             )
 
@@ -111,11 +137,11 @@ const HomeScreen = () => {
       };
       getLocationAsync();
 
-      return () => {
-        if (subscription) {
-          subscription.remove();
-        }
-      };
+      // return () => {
+      //   if (subscription) {
+      //     subscription.remove();
+      //   }
+      // };
     }, []);
 
     useFocusEffect(
@@ -123,8 +149,20 @@ const HomeScreen = () => {
         getUserInfo();
       }, [])
     );
- 
 
+    const saveRoute = () => {
+      setDirection(false)
+      const routeData = {
+        author: user.email,
+        origin: origin,
+        waypoints: waypoints,
+        destination: destination,
+        speed: speed
+      }
+
+      navigation.navigate('SaveRoute', { routeData });
+    }
+ 
     const navigation = useNavigation()
     return (
         <View className="flex-1">
@@ -149,12 +187,34 @@ const HomeScreen = () => {
                   ) : (<View></View>)
                 }
               </Marker>
+
+              {direction && (
+                <MapViewDirections
+                  origin={origin}
+                  destination={destination}
+                  apikey={GOOGLE_MAPS_APIKEY}
+                  waypoints={waypoints}
+                  strokeWidth={3}
+                  strokeColor="hotpink"
+                />
+              )}
             </MapView>
-                { routeStart ? (
+            <View style={styles.speedContainer}>
+                <Text style={styles.speedText}>{`${showSpeed.toFixed(2)} km/h`}</Text>
+              </View>
+              { direction ? (
+                <View style={styles.saveContainer}>
+                  <TouchableOpacity onPress={ saveRoute } style={styles.button}>
+                    <Text style={styles.buttonText}>Zapisz trasę</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (<View></View>) }
+            { routeStart ? (
             <View style={styles.buttonContainer}>
               <TouchableOpacity onPress={ handleStartPress } style={styles.button}>
                 <Text style={styles.buttonText}>Start</Text>
               </TouchableOpacity>
+                
 
               <TouchableOpacity onPress={ handleEndPress } style={styles.button}>
                 <Text style={styles.buttonText}>Koniec</Text>
@@ -170,10 +230,7 @@ const HomeScreen = () => {
         {location && (
           
         <View className="border-t-4 border-indigo-500 d-flex flex-row" style={{ height: 100, backgroundColor: '#0f172a' }}>
-        <View className="bg-black text-white flex-1" style={{ height: '50px' }}>
-          <Text className="text-white">LATITUDE: { location.latitude }</Text>
-          <Text className="text-white">LONGTITUDE: { location.longitude } </Text>
-        </View>
+
         <TouchableOpacity 
             onPress={()=> navigation.navigate('Settings')}
             className="border-4-white flex-1 justify-center items-center">
@@ -181,13 +238,13 @@ const HomeScreen = () => {
           </TouchableOpacity>
 
         <TouchableOpacity
-            onPress={()=> navigation.navigate('User')}
+            onPress={()=> navigation.navigate('User', { email: user.email })}
             className="border-4-white flex-1 justify-center items-center">
             <HomeIcon size="50" color="white" />
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={()=> navigation.navigate('Ride')}
+            onPress={()=> navigation.navigate('Ride', { email: user.email })}
             className="border-4-white flex-1 justify-center items-center">
             <FireIcon size="50" color="white" />
           </TouchableOpacity>
@@ -216,11 +273,34 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 16,
   },
+  saveContainer: {
+    position: 'absolute',
+    bottom: 100,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 16,
+  },
   button: {
     backgroundColor: 'rgba(0, 122, 255, 0.7)',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+  },
+  speedContainer: {
+    position: 'absolute',
+    top: 130,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  speedText: {
+    backgroundColor: 'rgba(0, 122, 255, 0.7)',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    color: 'white'
   },
   buttonText: {
     color: 'white',

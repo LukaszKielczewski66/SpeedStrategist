@@ -11,7 +11,8 @@ import SettingsScreen from '../screens/SettingsScreen';
 import AuthorsScreen from '../screens/AuthorsScreen';
 import PasswordChangeScreen from '../screens/PasswordChangeScreen';
 import IconChangeScreen from '../screens/IconChangeScreen';
-// import { isUserLoggedIn } from  '../hooks/auth';
+import SaveRouteScreen from '../screens/saveRouteScreen';
+import RouteScreen from '../screens/RouteScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,8 @@ export default function AppNavigation() {
           <Stack.Screen name="Authors" options={{headerShown: false}} component={AuthorsScreen} />
           <Stack.Screen name="PasswordChange" options={{headerShown: false}} component={PasswordChangeScreen} />
           <Stack.Screen name="IconChange" options={{headerShown: false}} component={IconChangeScreen} />
+          <Stack.Screen name="SaveRoute" options={{headerShown: false}} component={SaveRouteScreen} />
+          <Stack.Screen name="RouteScreen" options={{headerShown: false}} component={RouteScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     )
