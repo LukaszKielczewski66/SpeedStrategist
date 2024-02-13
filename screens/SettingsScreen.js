@@ -33,6 +33,7 @@ const SettingsScreen = () => {
                 const user = await axios.request(config);
 
                 setSettings(user.data);
+                console.log(user.data);
             }
           } catch (error) {
             console.error('error while fetching apiToken', error);
@@ -177,6 +178,14 @@ const SettingsScreen = () => {
                     </TouchableOpacity>
                 </View>
                 
+                <View className="mt-3">
+                    <TouchableOpacity
+                     className="py-3 bg-yellow-400 rounded-xl"
+                     onPress={ () => navigation.navigate('DriverProfile', { settings })}
+                    >
+                        <Text className="text-xl font-bold text-center text-gray-700">Profil kierowcy</Text>
+                    </TouchableOpacity>
+                </View>
 
                 <TouchableOpacity onPress = { handleLogout } className="p-1 bg-red-400 rounded-lg mt-8">
                     <Text className="text-white text-lg font-bold text-center">Logout</Text>

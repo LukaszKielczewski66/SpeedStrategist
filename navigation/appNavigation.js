@@ -13,6 +13,7 @@ import PasswordChangeScreen from '../screens/PasswordChangeScreen';
 import IconChangeScreen from '../screens/IconChangeScreen';
 import SaveRouteScreen from '../screens/saveRouteScreen';
 import RouteScreen from '../screens/RouteScreen';
+import DriverProfileScreen from '../screens/DriverProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -49,6 +50,7 @@ export default function AppNavigation() {
           <Stack.Screen name="IconChange" options={{headerShown: false}} component={IconChangeScreen} />
           <Stack.Screen name="SaveRoute" options={{headerShown: false}} component={SaveRouteScreen} />
           <Stack.Screen name="RouteScreen" options={{headerShown: false}} component={RouteScreen} />
+          <Stack.Screen name="DriverProfile" options={{headerShown: false}} component={DriverProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     )
