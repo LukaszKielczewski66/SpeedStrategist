@@ -18,7 +18,7 @@ const HomeScreen = () => {
   const [destination, setDestination] = useState(null)
   const [waypoints, setWaypoints] = useState([]);
   const [speed, setSpeed] = useState([]);
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyAR7ry2g93zY7AtyrSx1rN6qkF88IZblnI';
+  const GOOGLE_MAPS_APIKEY = '';
   const route = useRoute();
 
   const routeStart = route.params?.startNewRoute;

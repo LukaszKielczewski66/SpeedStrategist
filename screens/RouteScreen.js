@@ -13,7 +13,7 @@ import axios from "axios";
 const RouteScreen = () => {
     const route = useRoute();
     const { item, email, icon } = route.params;
-    const GOOGLE_MAPS_APIKEY = 'AIzaSyAR7ry2g93zY7AtyrSx1rN6qkF88IZblnI';
+    const GOOGLE_MAPS_APIKEY = '';
     const [location, setLocation] = useState({
         latitude: 52.1900717, longitude: 21.5305133
     });

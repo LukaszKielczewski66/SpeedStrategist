@@ -12,7 +12,7 @@ import axios from "axios";
 const ControlPointsScreen = () => {
     const route = useRoute();
     const { controlPoints, routeData, tripName } = route.params;
-    const GOOGLE_MAPS_APIKEY = 'AIzaSyAR7ry2g93zY7AtyrSx1rN6qkF88IZblnI';
+    const GOOGLE_MAPS_APIKEY = '';
     const navigation = useNavigation()
     
     const mockWayPoints = [{"latitude":52.1897024,"longitude":21.5320184},{"latitude":52.1889729,"longitude":21.5344283},{"latitude":52.1889058,"longitude":21.5345827},{"latitude":52.1888983,"longitude":21.5347512},{"latitude":52.1888554,"longitude":21.5351395},{"latitude":52.1869063,"longitude":21.5419448},{"latitude":52.1869515,"longitude":21.5423436},{"latitude":52.1870703,"longitude":21.5423974},{"latitude":52.1897367,"longitude":21.5427251},{"latitude":52.1987245,"longitude":21.5365295},{"latitude":52.2016774,"longitude":21.5373876},{"latitude":52.2023976,"longitude":21.5363716},{"latitude":52.2023351,"longitude":21.5367401},{"latitude":52.2021763,"longitude":21.536229},{"latitude":52.1941951,"longitude":21.5293664},{"latitude":52.1911172,"longitude":21.5275546},{"latitude":52.1906676,"longitude":21.5281676},{"latitude":52.1906347,"longitude":21.5284262},{"latitude":52.1906035,"longitude":21.5286719},{"latitude":52.1906035,"longitude":21.5286719},{"latitude":52.1906012,"longitude":21.5286902}]
