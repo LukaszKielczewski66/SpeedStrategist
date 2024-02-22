@@ -14,6 +14,7 @@ import IconChangeScreen from '../screens/IconChangeScreen';
 import SaveRouteScreen from '../screens/saveRouteScreen';
 import RouteScreen from '../screens/RouteScreen';
 import DriverProfileScreen from '../screens/DriverProfileScreen';
+import ControlPointsScreen from '../screens/ControlPointsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,7 @@ export default function AppNavigation() {
           <Stack.Screen name="SaveRoute" options={{headerShown: false}} component={SaveRouteScreen} />
           <Stack.Screen name="RouteScreen" options={{headerShown: false}} component={RouteScreen} />
           <Stack.Screen name="DriverProfile" options={{headerShown: false}} component={DriverProfileScreen} />
+          <Stack.Screen name="ControlPoints" options={{headerShown: false}} component={ControlPointsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     )

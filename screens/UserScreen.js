@@ -8,7 +8,7 @@ import axios from "axios";
 
 const UserScreen = () => {
     const route = useRoute();
-    const { email } = route.params;
+    const { email, icon } = route.params;
 
     const [userRoutes, setUserRoutes] = useState(null);
 
@@ -90,7 +90,7 @@ const UserScreen = () => {
                             <View className="flex items-center justify-center">
                                 <TouchableOpacity
                                 className="py-3 bg-yellow-400 rounded-xl"
-                                onPress={ () => navigation.navigate('RouteScreen', { item, email }) }>
+                                onPress={ () => navigation.navigate('RouteScreen', { item, email, icon }) }>
                                     <Text className="font-bold text-center text-gray-700 mx-8">Podgląd</Text>
                                 </TouchableOpacity>
                             </View>

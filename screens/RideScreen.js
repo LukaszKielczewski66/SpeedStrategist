@@ -8,7 +8,7 @@ import axios from "axios";
 
 const RideScreen = () => {
     const route = useRoute();
-    const { email } = route.params;
+    const { email, ride, icon } = route.params;
     const [routes, setRoutes] = useState();
 
     useEffect(() => {
@@ -84,7 +84,7 @@ const RideScreen = () => {
                             <View className="flex items-center justify-center">
                                 <TouchableOpacity
                                 className="py-3 bg-yellow-400 rounded-xl"
-                                onPress={ () => navigation.navigate('RouteScreen', { item, email }) }>
+                                onPress={ () => navigation.navigate('RouteScreen', { item, email, icon }) }>
                                     <Text className="font-bold text-center text-gray-700 mx-8">Podgląd</Text>
                                 </TouchableOpacity>
                             </View>

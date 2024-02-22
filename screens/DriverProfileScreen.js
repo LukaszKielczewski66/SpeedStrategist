@@ -95,6 +95,16 @@ const DriverProfileScreen = () => {
                 <View style={styles.section}>
                     <Text style={styles.label}>Liczba wszystkich przebytych tras:</Text>
                     <Text style={styles.value}>{ driverProfile.allRoutes } </Text>
+                    {
+                        driverProfile.allRoutes > 30 ? 
+                        (
+                            <Text style={styles.value}>Poziom: Początkujący</Text>
+                        )
+                        :
+                        (
+                            <Text style={styles.value}>Poziom: Zaawansowany</Text>
+                        )
+                    }
                 </View>
 
                 <View style={styles.section}>

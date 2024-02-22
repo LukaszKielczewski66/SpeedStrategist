@@ -9,6 +9,7 @@ import axios from "axios";
 const SaveRouteScreen = () => {
     const route = useRoute();
     const { routeData } = route.params;
+    const { controlPoints } = route.params;
 
     const [tripName, setTripName] = useState('');
     const [distance, setDistance] = useState(null);
@@ -20,6 +21,7 @@ const SaveRouteScreen = () => {
 
     useEffect(() => {
         console.log('routeData', routeData);
+        console.log('controlPoints: ', controlPoints)
         setData(routeData)
         const distance = calculateTotalDistance(routeData.waypoints)
 
@@ -92,6 +94,7 @@ const SaveRouteScreen = () => {
                 timesTab: JSON.stringify(timesTab),
                 distance: distance
             }
+            
 
             try {
                 let config = {
@@ -101,7 +104,19 @@ const SaveRouteScreen = () => {
                     data: data
                 }
 
+                let driverProfileConfig = {
+                    method: 'put',
+                    maxBodyLength: Infinity,
+                    url: `${API_CONFIG.baseUrl}/updateProperties`,
+                    data: {
+                        userEmail: routeData.author,
+                        propsToUpdate: 'allRoutes'
+                    }
+                }
+
                 const response = await axios.request(config);
+                const res = await axios.request(driverProfileConfig);
+                console.log(res.data);
                 if (response) {
                     navigation.navigate('User', { email: routeData.author });
                 }
@@ -121,6 +136,10 @@ const SaveRouteScreen = () => {
             onPress: () => {console.log('Ok pressed'); },
           }
         ])
+      }
+
+      const editControlPoints = () => {
+        navigation.navigate('ControlPoints', { controlPoints, routeData, tripName })
       }
 
 
@@ -151,7 +170,11 @@ const SaveRouteScreen = () => {
             <Text style={styles.label}>Czas: {time} s</Text>
             <Text style={styles.label}>Przebyty dystans: {distance} km</Text>
             <Text style={styles.label}>Średnia prędkość: {averageSpeed} km/h</Text>
-
+                <TouchableOpacity
+                    onPress={ editControlPoints } 
+                    className="py-3 bg-yellow-400 rounded-xl mx-4 mb-4 m-5 px-5 py-2">
+                    <Text className="text-xl font-bold text-center text-gray-700 mx-12">Edytuj punkty kontrolne</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     onPress={ handleSave } 
                     className="py-3 bg-yellow-400 rounded-xl mx-4 mb-4 m-5 px-5 py-2">

@@ -10,6 +10,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import API_CONFIG from '../config/api-config';
 import axios from "axios";
 
+// DODAĆ PRZYCISK Z DODANIEM WAYPOINTOW
 
 
 const HomeScreen = () => {
@@ -17,7 +18,7 @@ const HomeScreen = () => {
   const [destination, setDestination] = useState(null)
   const [waypoints, setWaypoints] = useState([]);
   const [speed, setSpeed] = useState([]);
-  const GOOGLE_MAPS_APIKEY = '';
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyAR7ry2g93zY7AtyrSx1rN6qkF88IZblnI';
   const route = useRoute();
 
   const routeStart = route.params?.startNewRoute;
@@ -28,6 +29,7 @@ const HomeScreen = () => {
   const [location, setLocation] = useState(null);
   const [apiToken, setApiToken] = useState(null);
   const [direction, setDirection] = useState(null);
+  const [controlPoints, setControlPoints] = useState([]);
   const [region, setRegion] = useState({
       latitude: 0,
       longitude: 0,
@@ -160,7 +162,21 @@ const HomeScreen = () => {
         speed: speed
       }
 
-      navigation.navigate('SaveRoute', { routeData });
+      navigation.navigate('SaveRoute', { routeData, controlPoints });
+    }
+
+    const addControlPoint = async() => {
+      let currentLocation = await Location.getCurrentPositionAsync({});
+
+      setControlPoints(prevControlPoints => [
+        ...prevControlPoints,
+        {
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+          speed: currentLocation.coords.speed,
+          timestamp: currentLocation.timestamp
+        }
+      ]);
     }
  
     const navigation = useNavigation()
@@ -214,6 +230,10 @@ const HomeScreen = () => {
               <TouchableOpacity onPress={ handleStartPress } style={styles.button}>
                 <Text style={styles.buttonText}>Start</Text>
               </TouchableOpacity>
+
+              <TouchableOpacity onPress={ addControlPoint } style={styles.button}>
+                <Text style={styles.buttonText}>Dodaj punkt kontrolny</Text>
+              </TouchableOpacity>
                 
 
               <TouchableOpacity onPress={ handleEndPress } style={styles.button}>
@@ -238,13 +258,13 @@ const HomeScreen = () => {
           </TouchableOpacity>
 
         <TouchableOpacity
-            onPress={()=> navigation.navigate('User', { email: user.email })}
+            onPress={()=> navigation.navigate('User', { email: user.email, icon: user.icon })}
             className="border-4-white flex-1 justify-center items-center">
             <HomeIcon size="50" color="white" />
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={()=> navigation.navigate('Ride', { email: user.email })}
+            onPress={()=> navigation.navigate('Ride', { email: user.email, icon: user.icon })}
             className="border-4-white flex-1 justify-center items-center">
             <FireIcon size="50" color="white" />
           </TouchableOpacity>

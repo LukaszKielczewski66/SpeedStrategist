@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, TouchableWithoutFeedback } from "react-native";
+import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, TouchableWithoutFeedback } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
@@ -9,16 +9,18 @@ import MapViewDirections from 'react-native-maps-directions';
 import API_CONFIG from '../config/api-config';
 import axios from "axios";
 
+
 const RouteScreen = () => {
     const route = useRoute();
-    const { item, email } = route.params;
-    const GOOGLE_MAPS_APIKEY = '';
+    const { item, email, icon } = route.params;
+    const GOOGLE_MAPS_APIKEY = 'AIzaSyAR7ry2g93zY7AtyrSx1rN6qkF88IZblnI';
     const [location, setLocation] = useState({
         latitude: 52.1900717, longitude: 21.5305133
     });
       const [tabTimes, setTabTimes] = useState([]);
 
       useEffect(() => {
+        console.log('icon: ', icon)
         console.log('start: ',tabTimes[0]);
         const getLocationAsync = async () => {
           try {
@@ -42,6 +44,55 @@ const RouteScreen = () => {
 
         getLocationAsync();
       }, []);
+
+      const [times, setTimes] = useState([]);
+      const [controls, setControls] = useState([]);
+      const [actualTimes, setActualTimes] = useState([]);
+      const [desiredTimes, setDesiredTimes] = useState([]);
+
+      useEffect(() => {
+        const getControlPoints = async() => {
+          let data = {
+            email: email,
+            routeName: item.title
+          }
+
+          let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${API_CONFIG.baseUrl}/getControlPoints`,
+            data: data
+          }
+          console.log('config', config)
+
+          try {
+            const res = await axios.request(config);
+            if (res) {
+              const resTimes = JSON.parse(res.data.times);
+              // console.log('res times', res.data.times)
+              console.log('PARSE TIMES: ', resTimes)
+              console.log('ACTUAL TIMES: ', resTimes.actualTimes)
+              console.log('DESIRED TIMES: ', resTimes.desiredTimes)
+              console.log('CONTROLS: ', JSON.parse(res.data.controls));
+              setTimes(resTimes)
+              setControls(JSON.parse(res.data.controls))
+              setActualTimes(resTimes.actualTimes)
+              setDesiredTimes(resTimes.desiredTimes)
+            }
+          } catch (e) {
+            console.log(e)
+          }
+        }
+
+        getControlPoints()
+      }, [])
+
+      const showControlPoints = () => {
+        setControlsModalVisible(true);
+        console.log('hi');
+      }
+
+      const [lastTime, setLastTime] = useState(null)
 
       const getUserTabTimes = async () => {
         try {
@@ -68,6 +119,7 @@ const RouteScreen = () => {
 
       useEffect(() => {
         getUserTabTimes();
+        const tab = getUserTabTimes()
       }, [])
       
 
@@ -129,6 +181,77 @@ const RouteScreen = () => {
                 console.log(response.data.route)
                 createAlert("Pomyślnie zapisano czas")
                 getUserTabTimes();
+                if (tabTimes) {
+                  console.log('update driver profile')
+                  let driverProfileConfig = {
+                    method: 'put',
+                    maxBodyLength: Infinity,
+                    url: `${API_CONFIG.baseUrl}/updateProperties`,
+                    data: {
+                        userEmail: email,
+                        propsToUpdate: 'allRoutes'
+                    }
+                  }
+
+                  await axios.request(driverProfileConfig);
+
+                  let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${API_CONFIG.baseUrl}/getRouteTimes`,
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    data: {
+                        title: item.title,
+                    }
+                }
+                  const response = await axios.request(config);
+                  console.log('TAB TIMES !!!!: ', response.data)
+                  
+                  if (response.data[0].user === email) {
+                    driverProfileConfig.data.propsToUpdate = 'firstPlaces';
+                    const res = await axios.request(driverProfileConfig);
+                    console.log('add first place', driverProfileConfig);
+                  } else if (response.data[1].user === email) {
+                    driverProfileConfig.data.propsToUpdate = 'secondPlaces';
+                    const res = await axios.request(driverProfileConfig);
+                    console.log('add second place');
+                    console.log(res);
+                  } else if (response.data[2].user === email) {
+                    driverProfileConfig.data.propsToUpdate = 'thirdPlaces';
+                    const res = await axios.request(driverProfileConfig);
+                    console.log('add first place');
+                    console.log(res);
+                  }
+
+                  let lastPlace;
+
+                  response.data.forEach((el, index) => {
+                    if (el.user === email) {
+                      lastPlace = index;
+                    }
+                  })
+
+                  const updateLastRide = {
+                    method: 'put',
+                    maxBodyLength: Infinity,
+                    url: `${API_CONFIG.baseUrl}/updateLastRide`,
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    data: {
+                        userEmail: email,
+                        lastRide: item.title,
+                        lastPlace: lastPlace
+                    }
+                  }
+
+                  console.log('update last ride: ', updateLastRide);
+
+                  await axios.request(updateLastRide);
+
+                }
             }
         } catch(e) {
             console.log(e);
@@ -137,6 +260,7 @@ const RouteScreen = () => {
       }
 
       const [modalVisible, setModalVisible] = useState(false);
+      const [controlsModalVisible, setControlsModalVisible] = useState(false);
 
       const showRank = () => {
         if (typeof tabTimes === 'string') {
@@ -150,6 +274,9 @@ const RouteScreen = () => {
         setModalVisible(false);
       }
 
+      const closeControlModal = () => {
+        setControlsModalVisible(false);
+      }
       
     const createAlert = alertContent => {
         console.log(alertContent);
@@ -178,11 +305,18 @@ const RouteScreen = () => {
                 <View>
                     <Text className="font-bold text-center text-white mx-8">Autor: {item.author}</Text>
                     <Text className="font-bold text-center text-white mx-8">Dystans: {item.distance} km</Text>
+                    <View className="flex-row">
                     <TouchableOpacity className="py-3 bg-yellow-400 rounded-xl my-3">
                         <Text 
                         onPress={ showRank }
                         className="font-bold text-center text-gray-700 mx-8">Ranking</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity className="mx-3 py-3 bg-yellow-400 rounded-xl my-3">
+                        <Text 
+                        onPress={ showControlPoints }
+                        className="font-bold text-center text-gray-700 mx-8">Punkty kontrolne</Text>
+                    </TouchableOpacity>
+                    </View>
                 </View>
                 <View className="flex-row mt-5">
                     <Text className="text-center text-white mx-8">Prędkość: { (speed * 10000).toFixed(2) }</Text>
@@ -205,7 +339,31 @@ const RouteScreen = () => {
                     longitudeDelta: 0.0421,
                 }}
             >
-                <Marker coordinate={location} title="Twoja lokalizacja"></Marker>
+                <Marker coordinate={location} title="Twoja lokalizacja">
+                {
+                  icon ? (
+                  <Image 
+                    source={{ uri: icon }}
+                    style={{ width: 32, height: 32 }}
+                  />
+                  ) : (<View></View>)
+                }
+                </Marker>
+                {
+                  controls.map((marker, index) => (
+                    <Marker
+                       key={ index }
+                       coordinate={
+                        {
+                          longitude: marker.longitude,
+                          latitude: marker.latitude
+                        }
+                       }
+                       title="punkt kontrolny"
+                       description={ `Punkt kontrolny nr. ${index}` }
+                    ></Marker>
+                  ))
+                }
                 <MapViewDirections
                   origin={JSON.parse(item.origin)}
                   destination={JSON.parse(item.destination)}
@@ -276,6 +434,59 @@ const RouteScreen = () => {
             <TouchableOpacity className="py-3 bg-yellow-400 rounded-xl my-3">
                         <Text 
                         onPress={ closeModal }
+                        className="font-bold text-center text-gray-700 mx-8">Zamknij</Text>
+                    </TouchableOpacity>
+            </View>
+        </Modal>
+
+        <Modal
+                animationType="slide"
+                transparent={true}
+                visible={controlsModalVisible}
+                onRequestClose={closeControlModal}
+            >
+                <TouchableWithoutFeedback onPress={closeControlModal}>
+                <View style={styles.modalOverlay}></View>
+                </TouchableWithoutFeedback>
+
+                <View style={styles.modalContent}>
+                <Text className="text-lg">Punkty kontrolne: </Text>
+
+                <View className="flex-row w-100 mb-10">
+                        <Text className="mx-1 text-slate-800 text-xl">Punkty kontrolne</Text>
+                        <Text className="mx-1 text-slate-800 text-xl">Twój czas </Text>
+                        <Text className="mx-1 text-slate-700 text-xl">Pożądany czas</Text>
+                    </View>
+                {
+                  actualTimes ?
+                   (<View>
+                    { actualTimes.map((el, index) => 
+                      (
+                        <View className="flex-row w-100 mx-4" key={ index }>
+                          <Text className="mx-7 p-3">Punkty: { index === 0 ? 'Start' : index } - { index === actualTimes.length -1 ? 'meta' : index  + 1 } </Text>
+                          <Text className="mx-7 p-3">  { el } </Text>
+                          <TextInput
+                           key={ index }
+                           placeholder="pożądany czas"
+                           value={ desiredTimes[index] }
+                           className="p-3 bg-gray-100 text-gray-700 rounded mb-3"
+                          ></TextInput>
+                        </View>
+                      )
+                    )}
+                   </View>) 
+                   : 
+                   (
+                    <View>
+                      <Text>Brak zapisanych czasów</Text>
+                    </View>
+                    )
+                }
+  
+            
+            <TouchableOpacity className="py-3 bg-yellow-400 rounded-xl my-3">
+                        <Text 
+                        onPress={ closeControlModal }
                         className="font-bold text-center text-gray-700 mx-8">Zamknij</Text>
                     </TouchableOpacity>
             </View>
